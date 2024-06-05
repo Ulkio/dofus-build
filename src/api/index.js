@@ -99,11 +99,21 @@ export const getDevItem = async () => {
     throw error;
   }
 };
-export const getAllItems = async ({ pageParam = 0 }) => {
+export const getAllItems = async ({ pageParam = 0, queryKey, itemName }) => {
+  const [, typeId] = queryKey;
+  console.log(typeId);
   try {
-    const response = await axios.get(
-      `${API_BASE_URL}items?$limit=50&$skip=${pageParam * 50}`
-    );
+    const response = await axios.get(`${API_BASE_URL}items`, {
+      params: {
+        $limit: 50,
+        $skip: pageParam * 50,
+        $sort: 1,
+        typeId: typeId,
+      },
+      if(itemName) {
+        params["name.fr"] = { $regex: itemName, $options: "i" };
+      },
+    });
     if (response.status !== 200) {
       throw new Error("Erreur de requête : " + response.status);
     }
@@ -118,6 +128,7 @@ export const getAllItems = async ({ pageParam = 0 }) => {
     throw error;
   }
 };
+
 export const getCharacteristicById = async (id) => {
   if (id == -1) return;
   try {
